@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h5 class="title">
+  Welcome, {{ name }}!
+</h5>
+
+{% if current_user.is_admin %}
+    <h6>Admin Dashboard</h6>
+
+    <h6>Upload a new file</h6>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-primary" role="alert">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="form-container">
+        <form method="post" action="{{ url_for('main.upload_file') }}" enctype="multipart/form-data">
+            <input type="file" class="form-control" name="file" required>
+            <button type="submit" class="form-control">Upload</button>
+        </form>
+    </div>
+
+    <h5>Available Files</h5>
+    <table class="table-bordered">
+        <thead>
+         <tr class="text-center">
+             <th scope="col">Filename</th>
+             <th scope="col">Downloads</th>
+             <th scope="col">Manage</th>
+         </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr class="text-center">
+                <td>{{ file.filename }}</td>
+                <td>{{ file.download_count }}</td>
+                <td>
+                    <a class="btn btn-link" href="{{ url_for('main.download_file', file_id=file.id) }}">Download</a> |
+                    <form method="post" action="{{ url_for('main.delete_file', file_id=file.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-link">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

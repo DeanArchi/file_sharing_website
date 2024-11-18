@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h5 class="title">Manage File Permissions</h5>
+
+<form method="POST">
+    <div>
+        <label for="user_id">Select User:</label>
+        <select class="form-select form-select-sm form-select-container" name="user_id" id="user_id">
+            {% for user in users %}
+                {% if not user.is_admin %}
+                    <option value="{{ user.id }}">{{ user.name }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="file_id">Select File:</label>
+        <select class="form-select form-select-sm form-select-container" name="file_id" id="file_id">
+            {% for file in files %}
+                <option value="{{ file.id }}">{{ file.filename }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="permission">Grant Permission:</label>
+        <input type="checkbox" name="permission" id="permission" value="on">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Permissions</button>
+</form>
+
+<h6>Current Permissions</h6>
+<table class="table-bordered">
+    <thead>
+        <tr class="text-center">
+            <th scope="col">File</th>
+            <th scope="col">User</th>
+            <th scope="col">Permission</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for file_id, file_data in file_permissions.items() %}
+            {% for user_id, has_permission in file_data.permissions.items() %}
+                {% if not users[user_id - 1].is_admin %}
+                    <tr class="text-center">
+                        <td>{{ file_data.file.filename }}</td>
+                        <td>{{ users[user_id - 1].name }}</td>
+                        <td>{{ 'Granted' if has_permission else 'Denied' }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

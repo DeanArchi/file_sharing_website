@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ messages[0] }}
+        </div>
+    {% endif %}
+{% endwith %}
+<h6 class="title">
+  Welcome to File Sharing Website!
+    {% if not current_user.is_authenticated %} Please, <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+        or <a href="{{ url_for('auth.login') }}">Login</a> to see details. {% endif %}
+</h6>
+{% if current_user.is_authenticated %}
+    <h6>Available Files</h6>
+    <table class="table-bordered">
+        <thead>
+            <tr class="text-center">
+                <th scope="col">Filename</th>
+                <th scope="col">Downloads</th>
+                <th scope="col">Manage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr class="text-center">
+                <td>{{ file.filename }}</td>
+                <td>{{ file.download_count }}</td>
+                <td>
+                    <a href="{{ url_for('main.download_file', file_id=file.id) }}">Download</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}
